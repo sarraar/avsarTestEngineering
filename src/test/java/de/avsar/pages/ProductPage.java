@@ -3,7 +3,7 @@ package de.avsar.pages;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-public class SchuhePage extends BasePage {
+public class ProductPage extends BasePage {
     @FindBy(id = "native_dropdown_selected_size_name")
     public WebElement dropdownSelect;
 
@@ -15,6 +15,5 @@ public class SchuhePage extends BasePage {
 
     @FindBy(xpath = "//span[contains(text(),'Zum Einkaufswagen hinzugefügt')]")
     public WebElement einkaufswgnHinfgnText;
-
 
 }

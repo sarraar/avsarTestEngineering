@@ -1,11 +1,11 @@
 package de.avsar.step_definitions;
 
-import de.avsar.pages.SchuhePage;
-import de.avsar.pages.HomePage;
+import de.avsar.pages.ProductPage;
 import de.avsar.pages.SearchPage;
 import de.avsar.utilities.BrowserUtils;
 import de.avsar.utilities.ConfigurationReader;
 import de.avsar.utilities.Driver;
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -14,36 +14,33 @@ import org.openqa.selenium.support.ui.Select;
 
 public class SearchItemStepDefs {
 
-    HomePage homePage = new HomePage();
     SearchPage searchPage = new SearchPage();
-    SchuhePage schuhePage = new SchuhePage();
+    ProductPage schuhePage = new ProductPage();
 
     @Given("Öffne die URL {string} in CHROME")
     public void öffne_die_URL_in_CHROME(String url) {
         Driver.get().get(url);
         Driver.get().manage().window().maximize();
         Assert.assertEquals("Die Amazon Startseite wird erfolgreich aufgerufen", "https://www.amazon.de/", Driver.get().getCurrentUrl());
-        homePage.cookiesAccptBtn.click();
+        searchPage.cookiesAccptBtn.click();
     }
 
     @When("Suche nach {string}")
     public void suche_nach(String string) {
-        homePage.searchTextBox.sendKeys(string);
-        homePage.submitBtn.click();
+        searchPage.searchTextBox.sendKeys(string);
+        searchPage.submitBtn.click();
         Assert.assertTrue("Es werden mindestens 5 Schuhe angezeigt.", searchPage.searchResults.size() > 5);
     }
 
     @When("Selektiere das erste Ergebnis")
     public void selektiere_das_erste_Ergebnis() {
+
+//        if (searchPage.firstResult.)
+       // [text()='Gesponsert']
+
         String expectedResult = searchPage.getText();
         searchPage.firstResult.click();
-
         String actualResult = schuhePage.productTitle.getText();
-//        Assert.assertTrue();
-//      String actualResult =
-//
-//        System.out.println("actualResult = " + actualResult);
-//
         Assert.assertTrue("Das Produkt wird erfolgreich aufgerufen", actualResult.contains(expectedResult));
     }
 
@@ -53,14 +50,6 @@ public class SearchItemStepDefs {
         selectSize.selectByIndex(1);
     }
 
-    @Then("klicke auf {string}")
-    public void klicke_auf(String string) {
-        BrowserUtils.waitFor(5);
-        schuhePage.addToCartBtn.click();
-        BrowserUtils.waitFor(5);
-        Assert.assertTrue(schuhePage.einkaufswgnHinfgnText.isDisplayed());
-    }
-
 
     @Given("Öffne die URL")
     public void öffneDieURL() {
@@ -68,8 +57,13 @@ public class SearchItemStepDefs {
         Driver.get().get(url);
         Driver.get().manage().window().maximize();
         Assert.assertEquals("https://www.amazon.de/", Driver.get().getCurrentUrl());
-        homePage.cookiesAccptBtn.click();
+        searchPage.cookiesAccptBtn.click();
     }
 
-
+    @And("klicke auf In den Einkaufswagen")
+    public void klickeAufInDenEinkaufswagen() {
+        BrowserUtils.waitFor(2);
+        schuhePage.addToCartBtn.click();
+        Assert.assertTrue(schuhePage.einkaufswgnHinfgnText.isDisplayed());
+    }
 }
