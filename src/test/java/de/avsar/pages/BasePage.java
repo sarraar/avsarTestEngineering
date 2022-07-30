@@ -14,10 +14,13 @@ public abstract class BasePage {
     public WebElement cookiesAccptBtn;
 
     @FindBy(id = "twotabsearchtextbox")
-    public WebElement searchTextBox;
+    public WebElement sucheTextBox;
 
     @FindBy(xpath = "//input[@type='submit']")
     public WebElement submitBtn;
+
+    @FindBy(id = "nav-cart-count")
+    public WebElement einkaufswagen;
 
 
 }

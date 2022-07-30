@@ -9,61 +9,88 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import org.junit.Assert;
+import static org.junit.Assert.*;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
+
+import java.util.List;
 
 public class SearchItemStepDefs {
 
     SearchPage searchPage = new SearchPage();
-    ProductPage schuhePage = new ProductPage();
+    ProductPage productPage = new ProductPage();
 
     @Given("Öffne die URL {string} in CHROME")
     public void öffne_die_URL_in_CHROME(String url) {
         Driver.get().get(url);
         Driver.get().manage().window().maximize();
-        Assert.assertEquals("Die Amazon Startseite wird erfolgreich aufgerufen", "https://www.amazon.de/", Driver.get().getCurrentUrl());
+        assertEquals("Die Amazon Startseite wird nicht aufgerufen", "https://www.amazon.de/", Driver.get().getCurrentUrl());
         searchPage.cookiesAccptBtn.click();
     }
 
     @When("Suche nach {string}")
     public void suche_nach(String string) {
-        searchPage.searchTextBox.sendKeys(string);
+        searchPage.sucheTextBox.sendKeys(string);
         searchPage.submitBtn.click();
-        Assert.assertTrue("Es werden mindestens 5 Schuhe angezeigt.", searchPage.searchResults.size() > 5);
+        assertTrue("5 Schuhe sind nicht angezeigt.", searchPage.searchResults.size() > 5);
     }
 
     @When("Selektiere das erste Ergebnis")
     public void selektiere_das_erste_Ergebnis() {
+        String expectedResult;
 
-//        if (searchPage.firstResult.)
-       // [text()='Gesponsert']
+        for (int i = 2; i < 20; i++) {
+            WebElement dynamicEle = Driver.get().findElement(By.xpath("//div[@data-index='" + i + "']"));
 
-        String expectedResult = searchPage.getText();
-        searchPage.firstResult.click();
-        String actualResult = schuhePage.productTitle.getText();
-        Assert.assertTrue("Das Produkt wird erfolgreich aufgerufen", actualResult.contains(expectedResult));
+            if (!dynamicEle.getText().contains("Gesponsert")) {
+                BrowserUtils.waitFor(1);
+                expectedResult = dynamicEle.getText();
+                dynamicEle.click();
+               assertTrue("Das Produkt wird nicht erfolgreich aufgerufen",expectedResult.contains(productPage.productTitle.getText().substring(0,3)));
+                break;
+            }
+        }
     }
 
     @Then("Wähle eine beliebige Größe aus")
     public void wähle_eine_beliebige_Größe_aus() {
-        Select selectSize = new Select(schuhePage.dropdownSelect);
+        Select selectSize = new Select(productPage.dropdownSelect);
         selectSize.selectByIndex(1);
+        BrowserUtils.waitFor(2);
+        if (!productPage.addToCartBtn.isDisplayed()) {
+            productPage.availableColour.click();
+        }
     }
-
 
     @Given("Öffne die URL")
     public void öffneDieURL() {
         String url = ConfigurationReader.get("url");
         Driver.get().get(url);
         Driver.get().manage().window().maximize();
-        Assert.assertEquals("https://www.amazon.de/", Driver.get().getCurrentUrl());
+        assertEquals("https://www.amazon.de/", Driver.get().getCurrentUrl());
         searchPage.cookiesAccptBtn.click();
     }
 
     @And("klicke auf In den Einkaufswagen")
     public void klickeAufInDenEinkaufswagen() {
         BrowserUtils.waitFor(2);
-        schuhePage.addToCartBtn.click();
-        Assert.assertTrue(schuhePage.einkaufswgnHinfgnText.isDisplayed());
+        productPage.addToCartBtn.click();
+        assertTrue(productPage.einkaufswgnHinfgnText.isDisplayed());
     }
+
+    @And("Öffne den Einkaufswagen")
+    public void öffneDenEinkaufswagen() {
+        productPage.einkaufswagen.click();
+    }
+
+    @Then("überprüfe die Texte")
+    public void überprüfeDieTexte(List<String> text) {
+        BrowserUtils.waitFor(2);
+        for (String texts : text) {
+            assertTrue("Im Einkaufswagen ist die Product nicht zu finden",Driver.get().getPageSource().contains(texts));
+        }
+    }
+
+
 }

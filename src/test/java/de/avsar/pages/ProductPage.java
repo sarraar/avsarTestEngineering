@@ -13,6 +13,12 @@ public class ProductPage extends BasePage {
     @FindBy(id = "productTitle")
     public WebElement productTitle;
 
+    @FindBy(id = "color_name_1")
+    public WebElement chooseColor;
+
+    @FindBy(className = "swatchAvailable")
+    public WebElement availableColour;
+
     @FindBy(xpath = "//span[contains(text(),'Zum Einkaufswagen hinzugefügt')]")
     public WebElement einkaufswgnHinfgnText;
 
